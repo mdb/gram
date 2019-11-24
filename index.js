@@ -19,7 +19,7 @@ app.get('/recent-media', (req, res) => {
   }
 
   axios({
-    url: `https://api.instagram.com/v1/users/self/media/recent?access_token\=${process.env.IG_ACCESS_TOKEN}&count=8`
+    url: `https://api.instagram.com/v1/users/self/media/recent?access_token\=${accessToken}&count=8`
   })
   .then(result => {
     res.send(result.data.data)
