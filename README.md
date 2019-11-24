@@ -15,6 +15,8 @@ npm run start
 
 ## Deploying to Heroku
 
+Assuming you have a Heroku account and the `heroku` CLI...
+
 1. login: `heroku login`
 2. create an app: `heroku create`
 3. deploy: `git push heroku master`
