@@ -2,15 +2,22 @@ const express = require('express')
 const cors = require('cors')
 const axios = require('axios')
 const app = express()
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 3000
 
 app.use(cors())
 
 app.get('/', (req, res) => {
-  res.send('hello world');
+  res.send({ message: 'hello world' });
 })
 
 app.get('/recent-media', (req, res) => {
+  const accessToken = process.env.IG_ACCESS_TOKEN
+
+  if (!accessToken) {
+    res.status(500)
+    res.send({ message: 'Required IG_ACCESS_TOKEN environment variable not set' })
+  }
+
   axios({
     url: `https://api.instagram.com/v1/users/self/media/recent?access_token\=${process.env.IG_ACCESS_TOKEN}&count=8`
   })
@@ -19,7 +26,7 @@ app.get('/recent-media', (req, res) => {
   })
   .catch(err => {
     res.status(500)
-    res.send({ error: err.message })
+    res.send({ message: err.message })
   })
 })
 
