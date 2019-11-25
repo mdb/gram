@@ -13,9 +13,16 @@ npm install
 npm run start
 ```
 
+## Development & Testing
+
+```
+npm install
+npm test
+```
+
 ## Deploying to Heroku
 
-Assuming you have a Heroku account and the `heroku` CLI...
+Assuming you have a [Heroku](http://heroku.com/) account and the `heroku` CLI...
 
 1. login: `heroku login`
 2. create an app: `heroku create`
