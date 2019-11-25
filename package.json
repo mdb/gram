@@ -15,7 +15,7 @@
     "nock": "11.7.0"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "node app.js",
     "test": "mocha tests/*.js --exit"
   },
   "author": "Mike Ball",
