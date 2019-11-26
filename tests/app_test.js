@@ -64,18 +64,19 @@ describe('gram', () => {
             .get('/v1/users/self/media/recent?access_token\=123&count=8')
             .reply(200, {
               data: [{
-                caption: 'some caption'
+                caption: {
+                  text: 'some caption'
+                }
               }]
             })
         })
-
 
         it('returns the recent media from the correct Instagram API endpoint', (done) => {
           chai.request(app)
             .get('/recent-media')
             .end((err, res) => {
               expect(res.status).to.equal(200)
-              expect(res.body[0].caption).to.equal('some caption')
+              expect(res.body[0].caption.text).to.equal('some caption')
               done()
             })
         })
