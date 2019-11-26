@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/mdb/gram/workflows/ci/badge.svg)](https://github.com/mdb/gram/actions)
+[![Actions Status](https://github.com/mdb/gram/workflows/CI/badge.svg)](https://github.com/mdb/gram/actions)
 
 # gram
 
