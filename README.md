@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/mdb/gram/workflows/ci/badge.svg)](https://github.com/mdb/gram/actions)
+
 # gram
 
 A micro-y service for fetching one's recent Instagram media, with CORS support.
