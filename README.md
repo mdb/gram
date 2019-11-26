@@ -13,6 +13,30 @@ npm install
 npm run start
 ```
 
+## Usage
+
+`gram` has 2 endpoints:
+
+1. `GET /` - a basic health check
+
+    Example:
+
+    ```bash
+    curl  http://localhost:3000
+    {"message":"hello world"}
+    ```
+
+2. `GET /recent-media` - get the 8 most recent media posts from the Instagram user with whom the `IG_ACCESS_TOKEN` is associated:
+
+    Example:
+    ```bash
+    curl  http://localhost:3000/recent-media | jq -r '.[0].caption.text'
+      % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                     Dload  Upload   Total   Spent    Left  Speed
+    100 12652  100 12652    0     0  40194      0 --:--:-- --:--:-- --:--:-- 40292
+    Some post caption text.
+    ```
+
 ## Development & Testing
 
 ```
