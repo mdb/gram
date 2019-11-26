@@ -69,6 +69,7 @@ describe('gram', () => {
             })
         })
 
+
         it('returns the recent media from the correct Instagram API endpoint', (done) => {
           chai.request(app)
             .get('/recent-media')
@@ -77,6 +78,26 @@ describe('gram', () => {
               expect(res.body[0].caption).to.equal('some caption')
               done()
             })
+        })
+
+        describe('the CORS headers present in its response', (done) => {
+          it('sets the proper access-control-allow-origin', (done) => {
+            chai.request(app)
+              .options('/recent-media')
+              .end((err, res) => {
+                expect(res.headers['access-control-allow-origin']).to.equal('*')
+                done()
+              })
+          })
+
+          it('sets the proper access-control-allow-methods', (done) => {
+            chai.request(app)
+              .options('/recent-media')
+              .end((err, res) => {
+                expect(res.headers['access-control-allow-methods']).to.equal('GET,HEAD,PUT,PATCH,POST,DELETE')
+                done()
+              })
+          })
         })
       })
     })
