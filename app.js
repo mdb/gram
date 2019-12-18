@@ -28,8 +28,10 @@ app.get('/recent-media', (req, res) => {
     res.json(result.data.data)
   })
   .catch(err => {
+    const status = err.response && err.response.status ? err.response.status : 500
+
     res
-      .status(500)
+      .status(status)
       .json({ message: err.message })
   })
 })

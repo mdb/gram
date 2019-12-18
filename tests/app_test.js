@@ -45,14 +45,15 @@ describe('gram', () => {
         beforeEach(() => {
           nock('https://api.instagram.com')
             .get('/v1/users/self/media/recent?access_token\=123&count=8')
-            .reply(500)
+            .reply(400)
         })
 
         it('returns the recent media from the correct Instagram API endpoint', (done) => {
           chai.request(app)
             .get('/recent-media')
             .end((err, res) => {
-              expect(res.body.message).to.equal('Request failed with status code 500')
+              expect(res.status).to.equal(400)
+              expect(res.body.message).to.equal('Request failed with status code 400')
               done()
             })
         })
