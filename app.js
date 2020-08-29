@@ -1,11 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const axios = require('axios')
-const helmet = require('helmet')
 const app = express()
 const port = process.env.PORT || 3000
-
-app.use(helmet())
 
 app.use(cors({
   methods: ['GET']
@@ -27,7 +24,7 @@ app.get('/recent-media', (req, res) => {
   }
 
   axios({
-    url: `https://api.instagram.com/v1/users/self/media/recent?access_token\=${accessToken}&count=8`
+    url: `https://graph.instagram.com/me/media?fields=media_url&access_token=${accessToken}`
   })
   .then(result => {
     res.json(result.data.data)

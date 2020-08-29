@@ -69,8 +69,8 @@ describe('gram', () => {
 
       describe('when the app encounters a problem issuing a request against the IG API', () => {
         beforeEach((done) => {
-          nock('https://api.instagram.com')
-            .get('/v1/users/self/media/recent?access_token\=123&count=8')
+          nock('https://graph.instagram.com')
+            .get(`/me/media?fields\=media_url&access_token=${process.env.IG_ACCESS_TOKEN}`)
             .reply(400)
 
           chai.request(app)
@@ -98,13 +98,11 @@ describe('gram', () => {
 
       describe('when the app does not encounter a problem issuing a request against the IG API', () => {
         beforeEach((done) => {
-          nock('https://api.instagram.com')
-            .get('/v1/users/self/media/recent?access_token\=123&count=8')
+          nock('https://graph.instagram.com')
+            .get(`/me/media?fields\=media_url&access_token=${process.env.IG_ACCESS_TOKEN}`)
             .reply(200, {
               data: [{
-                caption: {
-                  text: 'some caption'
-                }
+                media_url: 'media_url'
               }]
             })
 
@@ -127,7 +125,7 @@ describe('gram', () => {
         })
 
         it('returns the recent media from the correct Instagram API endpoint', () => {
-          expect(this.res.body[0].caption.text).to.equal('some caption')
+          expect(this.res.body[0].media_url).to.equal('media_url')
         })
 
         describe('the CORS headers present in its response', () => {
