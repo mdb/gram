@@ -24,7 +24,7 @@ app.get('/recent-media', (req, res) => {
   }
 
   axios({
-    url: `https://graph.instagram.com/me/media?fields=media_url&access_token=${accessToken}`
+    url: `https://graph.instagram.com/me/media?fields=media_url,permalink&access_token=${accessToken}`
   })
   .then(result => {
     res.json(result.data.data)

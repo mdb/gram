@@ -70,7 +70,7 @@ describe('gram', () => {
       describe('when the app encounters a problem issuing a request against the IG API', () => {
         beforeEach((done) => {
           nock('https://graph.instagram.com')
-            .get(`/me/media?fields\=media_url&access_token=${process.env.IG_ACCESS_TOKEN}`)
+            .get(`/me/media?fields\=media_url,permalink&access_token=${process.env.IG_ACCESS_TOKEN}`)
             .reply(400)
 
           chai.request(app)
@@ -99,10 +99,11 @@ describe('gram', () => {
       describe('when the app does not encounter a problem issuing a request against the IG API', () => {
         beforeEach((done) => {
           nock('https://graph.instagram.com')
-            .get(`/me/media?fields\=media_url&access_token=${process.env.IG_ACCESS_TOKEN}`)
+            .get(`/me/media?fields\=media_url,permalink&access_token=${process.env.IG_ACCESS_TOKEN}`)
             .reply(200, {
               data: [{
-                media_url: 'media_url'
+                media_url: 'media_url',
+                permalink: 'permalink'
               }]
             })
 
@@ -124,8 +125,12 @@ describe('gram', () => {
           expect(this.res.status).to.equal(200)
         })
 
-        it('returns the recent media from the correct Instagram API endpoint', () => {
+        it('returns the media URL for each recent media returned by the correct Instagram API endpoint', () => {
           expect(this.res.body[0].media_url).to.equal('media_url')
+        })
+
+        it('returns the permalink for each recent media returned by the correct Instagram API endpoint', () => {
+          expect(this.res.body[0].permalink).to.equal('permalink')
         })
 
         describe('the CORS headers present in its response', () => {
