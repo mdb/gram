@@ -32,11 +32,11 @@ npm run start
 
     Example:
     ```bash
-    curl http://localhost:3000/recent-media | jq -r '.[0].caption.text'
+    curl http://localhost:3000/recent-media | jq -r '.[0].permalink'
       % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                      Dload  Upload   Total   Spent    Left  Speed
     100 12652  100 12652    0     0  40194      0 --:--:-- --:--:-- --:--:-- 40292
-    Some post caption text.
+    https://www.instagram.com/p/CEbmnwBDYMR/
     ```
 
 ## Development & Testing
