@@ -29,7 +29,7 @@ app.get('/recent-media', (req, res) => {
       return
   }
 
-  if (media && secondsAgo(media.timestamp) < cacheTtl && !req.query.cache_clear) {
+  if (media && secondsAgo(media.timestamp) < cacheTtl && !req.query.clear_cache) {
     res.json(media.data)
 
     return
