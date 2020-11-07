@@ -3,6 +3,9 @@ const cors = require('cors')
 const axios = require('axios')
 const app = express()
 const port = process.env.PORT || 3000
+const cacheTtl = process.env.CACHE_TTL || 10800
+
+let media;
 
 app.use(cors({
   methods: ['GET']
@@ -14,6 +17,9 @@ app.get('/', (req, res) => {
 
 app.get('/recent-media', (req, res) => {
   const accessToken = process.env.IG_ACCESS_TOKEN
+  const secondsAgo = (timestamp) => {
+    return (Date.now() - timestamp)/1000
+  }
 
   if (!accessToken) {
     res
@@ -23,10 +29,21 @@ app.get('/recent-media', (req, res) => {
       return
   }
 
+  if (media && secondsAgo(media.timestamp) < cacheTtl && !req.query.cache_clear) {
+    res.json(media.data)
+
+    return
+  }
+
   axios({
     url: `https://graph.instagram.com/me/media?fields=media_url,permalink&access_token=${accessToken}`
   })
   .then(result => {
+    media = {
+      timestamp: Date.now(),
+      data: result.data.data
+    };
+
     res.json(result.data.data)
   })
   .catch(err => {
