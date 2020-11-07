@@ -3,7 +3,7 @@ const cors = require('cors')
 const axios = require('axios')
 const app = express()
 const port = process.env.PORT || 3000
-const cacheTtl = process.env.CACHE_TTL || 3
+const cacheTtl = process.env.CACHE_TTL || 10800
 
 let media;
 
@@ -17,8 +17,8 @@ app.get('/', (req, res) => {
 
 app.get('/recent-media', (req, res) => {
   const accessToken = process.env.IG_ACCESS_TOKEN
-  const hoursAgo = (timestamp) => {
-    return (Date.now() - timestamp)/1000/60/60
+  const secondsAgo = (timestamp) => {
+    return (Date.now() - timestamp)/1000
   }
 
   if (!accessToken) {
@@ -29,7 +29,7 @@ app.get('/recent-media', (req, res) => {
       return
   }
 
-  if (media && hoursAgo(media.timestamp) < cacheTtl && !req.query.cache_clear) {
+  if (media && secondsAgo(media.timestamp) < cacheTtl && !req.query.cache_clear) {
     res.json(media.data)
 
     return
