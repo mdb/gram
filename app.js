@@ -51,7 +51,10 @@ app.get('/recent-media', (req, res) => {
 
     res
       .status(status)
-      .json({ message: err.message })
+      .json({
+        message: err.message,
+        details: err.response.data
+      })
   })
 })
 
