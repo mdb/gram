@@ -68,10 +68,12 @@ describe('gram', () => {
       })
 
       describe('when the app encounters a problem issuing a request against the IG API', () => {
+        const responseBody = { error: 'some error' }
+
         beforeEach((done) => {
           nock('https://graph.instagram.com')
             .get(`/me/media?fields\=media_url,permalink&access_token=${process.env.IG_ACCESS_TOKEN}`)
-            .reply(400)
+            .reply(400, responseBody)
 
           chai.request(app)
             .get('/recent-media')
@@ -93,6 +95,10 @@ describe('gram', () => {
 
         it('surfaces a helpful message about the upstream error', () => {
           expect(this.res.body.message).to.equal('Request failed with status code 400')
+        })
+
+        it('surfaces an upstream response details of the upstream error', () => {
+          expect(this.res.body.details).to.eql(responseBody)
         })
       })
 
