@@ -7,6 +7,10 @@ const expect = chai.expect
 chai.use(chaiHttp)
 
 describe('gram', () => {
+  afterEach(() => {
+    app.cache = undefined
+  })
+
   describe('GET /', () => {
     beforeEach((done) => {
       chai.request(app)
@@ -68,37 +72,77 @@ describe('gram', () => {
       })
 
       describe('when the app encounters a problem issuing a request against the IG API', () => {
-        const responseBody = { error: 'some error' }
+        describe('when there is cached media data', () => {
+          beforeEach((done) => {
+            app.cache = {
+              data: [{
+                media_url: 'media_url',
+                permalink: 'permalink'
+              }]
+            }
 
-        beforeEach((done) => {
-          nock('https://graph.instagram.com')
-            .get(`/me/media?fields\=media_url,permalink&access_token=${process.env.IG_ACCESS_TOKEN}`)
-            .reply(400, responseBody)
+            nock('https://graph.instagram.com')
+              .get(`/me/media?fields\=media_url,permalink&access_token=${process.env.IG_ACCESS_TOKEN}`)
+              .reply(400, {
+                error: 'some error'
+              })
 
-          chai.request(app)
-            .get('/recent-media')
-            .end((err, res) => {
-              this.res = res
-              this.err = err
+            chai.request(app)
+              .get('/recent-media')
+              .end((err, res) => {
+                this.res = res
+                this.err = err
 
-              done()
-            })
+                done()
+              })
+          })
+
+          it('does not return an error', () => {
+            expect(this.err).to.be.null
+          })
+
+          it('returns a 200 status code', () => {
+            expect(this.res.status).to.equal(200)
+          })
+
+          it('returns the cached data', () => {
+            expect(this.res.body[0].media_url).to.equal('media_url')
+          })
         })
 
-        it('does not return an error', () => {
-          expect(this.err).to.be.null
-        })
+        describe('when there is no cached media data', () => {
+          const responseBody = { error: 'some error' }
 
-        it('surfaces the upstream status code', () => {
-          expect(this.res.status).to.equal(400)
-        })
+          beforeEach((done) => {
+            nock('https://graph.instagram.com')
+              .get(`/me/media?fields\=media_url,permalink&access_token=${process.env.IG_ACCESS_TOKEN}`)
+              .reply(400, responseBody)
 
-        it('surfaces a helpful message about the upstream error', () => {
-          expect(this.res.body.message).to.equal('Request failed with status code 400')
-        })
+            chai.request(app)
+              .get('/recent-media')
+              .end((err, res) => {
+                this.res = res
+                this.err = err
 
-        it('surfaces an upstream response details of the upstream error', () => {
-          expect(this.res.body.details).to.eql(responseBody)
+                done()
+              })
+          })
+
+          it('does not return an error', () => {
+            expect(this.err).to.be.null
+          })
+
+          it('surfaces the upstream status code', () => {
+            expect(this.res.status).to.equal(400)
+          })
+
+          it('surfaces a helpful message about the upstream error', () => {
+            expect(this.res.body.message).to.equal('Request failed with status code 400')
+          })
+
+          it('surfaces an upstream response details of the upstream error', () => {
+            expect(this.res.body.details).to.eql(responseBody)
+          })
         })
       })
 
