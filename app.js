@@ -5,8 +5,6 @@ const app = express()
 const port = process.env.PORT || 3000
 const cacheTtl = process.env.CACHE_TTL || 10800
 
-let media;
-
 app.use(cors({
   methods: ['GET']
 }))
@@ -29,8 +27,8 @@ app.get('/recent-media', (req, res) => {
       return
   }
 
-  if (media && secondsAgo(media.timestamp) < cacheTtl && !req.query.clear_cache) {
-    res.json(media.data)
+  if (app.cache && secondsAgo(app.cache.timestamp) < cacheTtl && !req.query.clear_cache) {
+    res.json(app.cache.data)
 
     return
   }
@@ -39,7 +37,7 @@ app.get('/recent-media', (req, res) => {
     url: `https://graph.instagram.com/me/media?fields=media_url,permalink&access_token=${accessToken}`
   })
   .then(result => {
-    media = {
+    app.cache = {
       timestamp: Date.now(),
       data: result.data.data
     };
@@ -48,6 +46,14 @@ app.get('/recent-media', (req, res) => {
   })
   .catch(err => {
     const status = err.response && err.response.status ? err.response.status : 500
+
+    if (app.cache && app.cache.data) {
+      console.error(`encountered ${err.response.status}: ${err.message} attempting request media from graph.instagram.com`)
+
+      res.json(app.cache.data)
+
+      return
+    }
 
     res
       .status(status)
