@@ -3,7 +3,8 @@ const cors = require('cors')
 const axios = require('axios')
 const app = express()
 const port = process.env.PORT || 3000
-const cacheTtl = process.env.CACHE_TTL || 10800
+// NOTE: 259200 seconds is 3 days
+const cacheTtl = process.env.CACHE_TTL || 259200
 
 app.use(cors({
   methods: ['GET']
@@ -27,7 +28,7 @@ app.get('/recent-media', (req, res) => {
       return
   }
 
-  if (app.cache && secondsAgo(app.cache.timestamp) < cacheTtl && !req.query.clear_cache) {
+  if (app.cache && (secondsAgo(app.cache.timestamp) < cacheTtl) && !req.query.clear_cache) {
     res.json(app.cache.data)
 
     return
